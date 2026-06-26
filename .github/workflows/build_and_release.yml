@@ -52,6 +52,21 @@ jobs:
         run: |
           bash scripts/npu_ci_install_dependency.sh --torch-version ${{ matrix.torch_version }}
 
+      - name: Build cann-custom
+        run: |
+          cd ../
+          mkdir cann-custom
+          cd cann-custom
+          git clone https://gitcode.com/cann/cann-recipes-infer.git
+          cd cann-recipes-infer
+          git checkout 35a476c
+          env -i PATH=${PATH} bash --login -c "
+            ./ops/ascendc/build.sh
+          "
+          env -i PATH=${PATH} bash --login -c "
+            ./ops/ascendc/torch_ops_extension/build_and_install.sh
+          "
+
       - name: Build SGL-Kernel-NPU
         run: |
           env -i PATH=${PATH} bash --login -c "
