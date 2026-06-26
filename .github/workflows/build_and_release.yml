@@ -50,6 +50,7 @@ jobs:
           bash scripts/npu_ci_install_dependency.sh --torch-version ${{ matrix.torch_version }}
 
       - name: Build cann-custom
+        if: matrix.cann_version == '9.0.0'
         run: |
           cd ../
           mkdir cann-custom
