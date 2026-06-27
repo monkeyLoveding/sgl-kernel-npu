@@ -59,12 +59,13 @@ jobs:
           cd cann-recipes-infer
           git checkout 35a476c
           env -i PATH=${PATH} bash --login -c "
-            cd ops/ascendc
-            bash build.sh
+            cd ops/ascendc/torch_ops_extension
+            pip install ninja
+            bash build_and_install.sh
           "
           env -i PATH=${PATH} bash --login -c "
-            cd ops/ascendc/torch_ops_extension
-            bash build_and_install.sh
+            cd ops/ascendc
+            bash build.sh
           "
 
       - name: Build SGL-Kernel-NPU
