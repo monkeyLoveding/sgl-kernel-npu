@@ -49,53 +49,6 @@ jobs:
         run: |
           bash scripts/npu_ci_install_dependency.sh --torch-version ${{ matrix.torch_version }}
 
-      - name: Build ops-transformer for a3
-        if: matrix.cann_version == '9.0.0' && matrix.npu_hardware == 'a3'
-        run: |
-          cd ../
-          mkdir cann-ops-transformer_a3
-          cd cann-ops-transformer_a3
-          git clone https://gitcode.com/cann/ops-transformer.git
-          cd ops-transformer
-          git checkout bcc6304
-          env -i PATH=${PATH} bash --login -c "
-            pip install packaging
-            bash build.sh --pkg --experimental --soc=ascend910_93 --ops=\"sparse_attn_sharedkv,sparse_attn_sharedkv_metadata,quant_lightning_indexer,quant_lightning_indexer_metadata,compressor\"
-          "
-
-      - name: Build ops-transformer for 910b
-        if: matrix.cann_version == '9.0.0' && matrix.npu_hardware == '910b'
-        run: |
-          cd ../
-          mkdir cann-ops-transformer_910b
-          cd cann-ops-transformer_910b
-          git clone https://gitcode.com/cann/ops-transformer.git
-          cd ops-transformer
-          git checkout bcc6304
-          env -i PATH=${PATH} bash --login -c "
-            pip install packaging
-            bash build.sh --pkg --experimental --soc=ascend910b --ops=\"sparse_attn_sharedkv,sparse_attn_sharedkv_metadata,quant_lightning_indexer,quant_lightning_indexer_metadata,compressor\"
-          "    
-
-      - name: Build cann-custom
-        if: matrix.cann_version == '9.0.0'
-        run: |
-          cd ../
-          mkdir cann-custom
-          cd cann-custom
-          git clone https://gitcode.com/cann/cann-recipes-infer.git
-          cd cann-recipes-infer
-          git checkout 35a476c
-          env -i PATH=${PATH} bash --login -c "
-            cd ops/ascendc/torch_ops_extension
-            pip install ninja
-            bash build_and_install.sh
-          "
-          env -i PATH=${PATH} bash --login -c "
-            cd ops/ascendc
-            bash build.sh
-          "
-
       - name: Build SGL-Kernel-NPU
         run: |
           env -i PATH=${PATH} bash --login -c "
@@ -126,12 +79,64 @@ jobs:
             ./build.sh -a deepep
           "
 
+      - name: Build ops-transformer for a3
+        if: matrix.cann_version == '9.0.0' && matrix.npu_hardware == 'a3'
+        run: |
+          cd ../
+          mkdir cann-ops-transformer_a3
+          cd cann-ops-transformer_a3
+          git clone https://gitcode.com/cann/ops-transformer.git
+          cd ops-transformer
+          git checkout bcc6304
+          env -i PATH=${PATH} bash --login -c "
+            pip install packaging
+            bash build.sh --pkg --experimental --soc=ascend910_93 --ops=\"sparse_attn_sharedkv,sparse_attn_sharedkv_metadata,quant_lightning_indexer,quant_lightning_indexer_metadata,compressor\"
+          "
+          cp /build_out/cann-ops-*.run ../../sgl-kernel-npu/output/
+
+      - name: Build ops-transformer for 910b
+        if: matrix.cann_version == '9.0.0' && matrix.npu_hardware == '910b'
+        run: |
+          cd ../
+          mkdir cann-ops-transformer_910b
+          cd cann-ops-transformer_910b
+          git clone https://gitcode.com/cann/ops-transformer.git
+          cd ops-transformer
+          git checkout bcc6304
+          env -i PATH=${PATH} bash --login -c "
+            pip install packaging
+            bash build.sh --pkg --experimental --soc=ascend910b --ops=\"sparse_attn_sharedkv,sparse_attn_sharedkv_metadata,quant_lightning_indexer,quant_lightning_indexer_metadata,compressor\"
+          "  
+          cp ./build_out/cann-ops-*.run ../../sgl-kernel-npu/output/
+
+      - name: Build cann-custom
+        if: matrix.cann_version == '9.0.0'
+        run: |
+          cd ../
+          mkdir cann-custom
+          cd cann-custom
+          git clone https://gitcode.com/cann/cann-recipes-infer.git
+          cd cann-recipes-infer
+          git checkout 35a476c
+          env -i PATH=${PATH} bash --login -c "
+            cd ops/ascendc/torch_ops_extension
+            pip install ninja
+            bash build_and_install.sh
+          "
+          env -i PATH=${PATH} bash --login -c "
+            cd ops/ascendc
+            bash build.sh
+          "
+          cp ./ops/ascendc/torch_ops_extension/dist/cann_ops-*.whl ../../sgl-kernel-npu/output/
+          cp ./ops/ascendc/output/CANN-custom_ops-*.run ../../sgl-kernel-npu/output/
+
       - name: Pack up packages
         run: |
           export TORCH_DEVICE_BACKEND_AUTOLOAD=0
           TORCH_VERSION=$(python3 -c "import torch; print(torch.__version__)" | awk -F'+' '{print $1}')
           PYTHON_VERSION=$(python3 -c "import platform; print(platform.python_version())" | awk -F'.' '{print $1$2}')
           PACKAGE_NAME="sgl-kernel-npu-${{ github.event.release.tag_name }}-torch${TORCH_VERSION}-py${PYTHON_VERSION}-cann${{ matrix.cann_version }}-${{ matrix.npu_hardware }}-${{ matrix.arch }}.zip"
+          cp ../
           cd output/
           zip -v ${PACKAGE_NAME} ./*.whl
           ls -al
