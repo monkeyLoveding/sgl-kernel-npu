@@ -59,11 +59,11 @@ jobs:
           cd cann-recipes-infer
           git checkout 35a476c
           env -i PATH=${PATH} bash --login -c "
-            cd /ops/ascendc
+            cd ops/ascendc
             bash build.sh
           "
           env -i PATH=${PATH} bash --login -c "
-            cd /ops/ascendc/torch_ops_extension
+            cd ops/ascendc/torch_ops_extension
             bash build_and_install.sh
           "
 
