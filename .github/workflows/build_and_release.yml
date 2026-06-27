@@ -57,7 +57,7 @@ jobs:
           cd cann-ops-transformer_a3
           git clone https://gitcode.com/cann/ops-transformer.git
           cd ops-transformer
-          git checkout 35a476c
+          git checkout bcc6304
           env -i PATH=${PATH} bash --login -c "
             bash build.sh --pkg --experimental --soc=ascend910_93 --ops=\"sparse_attn_sharedkv,sparse_attn_sharedkv_metadata,quant_lightning_indexer,quant_lightning_indexer_metadata,compressor\"
           "
@@ -70,7 +70,7 @@ jobs:
           cd cann-ops-transformer_910b
           git clone https://gitcode.com/cann/ops-transformer.git
           cd ops-transformer
-          git checkout 35a476c
+          git checkout bcc6304
           env -i PATH=${PATH} bash --login -c "
             bash build.sh --pkg --experimental --soc=ascend910b --ops=\"sparse_attn_sharedkv,sparse_attn_sharedkv_metadata,quant_lightning_indexer,quant_lightning_indexer_metadata,compressor\"
           "    
