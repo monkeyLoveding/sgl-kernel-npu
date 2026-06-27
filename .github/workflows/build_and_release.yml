@@ -49,6 +49,32 @@ jobs:
         run: |
           bash scripts/npu_ci_install_dependency.sh --torch-version ${{ matrix.torch_version }}
 
+      - name: Build ops-transformer for a3
+        if: matrix.cann_version == '9.0.0' && matrix.npu_hardware == 'a3'
+        run: |
+          cd ../
+          mkdir cann-ops-transformer_a3
+          cd cann-ops-transformer_a3
+          git clone https://gitcode.com/cann/ops-transformer.git
+          cd ops-transformer
+          git checkout 35a476c
+          env -i PATH=${PATH} bash --login -c "
+            bash build.sh --pkg --experimental --soc=ascend910_93 --ops=\"sparse_attn_sharedkv,sparse_attn_sharedkv_metadata,quant_lightning_indexer,quant_lightning_indexer_metadata,compressor\"
+          "
+
+      - name: Build ops-transformer for 910b
+        if: matrix.cann_version == '9.0.0' && matrix.npu_hardware == '910b'
+        run: |
+          cd ../
+          mkdir cann-ops-transformer_910b
+          cd cann-ops-transformer_910b
+          git clone https://gitcode.com/cann/ops-transformer.git
+          cd ops-transformer
+          git checkout 35a476c
+          env -i PATH=${PATH} bash --login -c "
+            bash build.sh --pkg --experimental --soc=ascend910b --ops=\"sparse_attn_sharedkv,sparse_attn_sharedkv_metadata,quant_lightning_indexer,quant_lightning_indexer_metadata,compressor\"
+          "    
+
       - name: Build cann-custom
         if: matrix.cann_version == '9.0.0'
         run: |
