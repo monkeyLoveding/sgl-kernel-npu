@@ -92,7 +92,7 @@ jobs:
             pip install packaging
             bash build.sh --pkg --experimental --soc=ascend910_93 --ops=\"sparse_attn_sharedkv,sparse_attn_sharedkv_metadata,quant_lightning_indexer,quant_lightning_indexer_metadata,compressor\"
           "
-          cp /build_out/cann-ops-*.run ../../sgl-kernel-npu/output/
+          cp ./build_out/cann-ops-*.run ../../sgl-kernel-npu/output/
 
       - name: Build ops-transformer for 910b
         if: matrix.cann_version == '9.0.0' && matrix.npu_hardware == '910b'
