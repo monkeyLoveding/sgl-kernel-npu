@@ -274,7 +274,7 @@ jobs:
           PACKAGE_NAME="custom-ops-${{ github.event.release.tag_name }}-cann${{ matrix.torch_version }}-cann${{ matrix.cann_version }}-${{ matrix.npu_hardware }}-${{ matrix.arch }}.zip"
           cd ../cann-recipes-infer
           mkdir output
-          ccp ./ops/ascendc/torch_ops_extension/dist/custom_ops-*.whl ./output
+          cp ./ops/ascendc/torch_ops_extension/dist/custom_ops-*.whl ./output
           cp ./ops/ascendc/output/CANN-custom_ops-*.run ./output
           zip -v ${PACKAGE_NAME} ./*.run ./*.whl
           ls -al
