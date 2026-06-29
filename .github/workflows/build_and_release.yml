@@ -49,6 +49,12 @@ jobs:
         run: |
           bash scripts/npu_ci_install_dependency.sh --torch-version ${{ matrix.torch_version }}
 
+      - name: Debug tag info
+        if: github.event_name == 'release'
+        run: |
+          echo "github.ref = ${{ github.ref }}"
+          echo "tag from release event = ${{ github.event.release.tag_name }}"    
+
       - name: Build SGL-Kernel-NPU
         run: |
           env -i PATH=${PATH} bash --login -c "
