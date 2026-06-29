@@ -127,7 +127,7 @@ jobs:
             cd ops/ascendc
             bash build.sh
           "
-          cp ./ops/ascendc/torch_ops_extension/dist/cann_ops-*.whl ../../sgl-kernel-npu/output/
+          cp ./ops/ascendc/torch_ops_extension/dist/custom_ops-*.whl ../../sgl-kernel-npu/output/
           cp ./ops/ascendc/output/CANN-custom_ops-*.run ../../sgl-kernel-npu/output/
 
       - name: Pack up packages
